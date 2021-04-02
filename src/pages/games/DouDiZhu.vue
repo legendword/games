@@ -1,0 +1,407 @@
+<template>
+    <q-page class="q-pa-lg">
+        <div v-if="pageMode == 'description'">
+            <!-- todo -->
+        </div>
+        <div v-if="pageMode == 'lobby'" class="row">
+            <div class="col q-pa-lg">
+                <div class="text-h4 q-my-md">DouDiZhu - Room Lobby</div>
+                <q-separator />
+                <div class="text-h5 q-my-md">Players ({{game.playerCount}}/{{game.playerLimit}})</div>
+                <q-list bordered separator>
+                    <q-item v-for="player in game.players" :key="player.token">
+                        <q-item-section class="text-subtitle2 q-py-sm" style="font-size: 1.1rem;">{{player.name}}</q-item-section>
+                        <q-item-section side><q-icon v-if="player.state == 'ready'" color="positive" name="done" /></q-item-section>
+                    </q-item>
+                </q-list>
+                <div class="q-mt-lg text-center">
+                    <q-btn color="primary" :flat="myPlayer.state == 'ready'" :label="myPlayer.state == 'ready' ? 'Waiting for Others' : 'Start Game'" :disable="game.playerCount !== game.playerLimit" @click="lobbyReady" />
+                </div>
+            </div>
+            <div class="col-3 q-pa-lg">
+                <div class="text-h6" style="height: 50px;">Console</div>
+                <q-scroll-area class="console q-pa-md">
+                    <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
+                </q-scroll-area>
+            </div>
+        </div>
+        <div v-if="pageMode == 'game'" class="row">
+            <div class="col">
+                <div class="game-container">
+                    <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
+                        <div class="player-name">{{ leftPlayer.name }}</div>
+                        <div class="text-center player-chips">
+                            <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord">LandLord</q-chip>
+                        </div>
+                        <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
+                            <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                        </div>
+                    </div>
+                    <div :class="'game-container-right' + (game.roundPos == rightPlayer.position ? ' current-player' : '')">
+                        <div class="player-name">{{ rightPlayer.name }}</div>
+                        <div class="text-center player-chips">
+                            <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord">LandLord</q-chip>
+                        </div>
+                        <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
+                            <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                        </div>
+                    </div>
+                    <div :class="'game-container-bottom' + (game.roundPos == myPlayer.position ? ' current-player' : '')">
+                        <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
+                            <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @click="toggleCardSelect(item.id)" />
+                        </div>
+                        <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">Landlord</q-chip></div>
+                    </div>
+                    <div class="game-container-middle">
+                        <div class="card-pile">
+                            <div class="container-cards game-card-outer" :style="{width: currentCardList.length*20+80 + 'px'}">
+                                <img v-for="(item, itid) in currentCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*20 + 'px'}" />
+                            </div>
+                        </div>
+                        <div class="landlord-card-pool">
+                            <div v-if="game.cardPool.length > 0" class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
+                                <img v-for="(item, itid) in cardPoolList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*110 + 'px'}" />
+                            </div>
+                            <div v-else class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
+                                <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*110 + 'px'}" />
+                            </div>
+                        </div>
+                        <div class="status left-status">
+                            <div class="text" v-show="leftPlayer.lastMove == 'pass'">PASS</div>
+                            <div class="text" v-show="leftPlayer.lastMove == 'card'"><q-icon name="arrow_forward" /></div>
+                        </div>
+                        <div class="status right-status">
+                            <div class="text" v-show="rightPlayer.lastMove == 'pass'">PASS</div>
+                            <div class="text" v-show="rightPlayer.lastMove == 'card'"><q-icon name="arrow_backward" /></div>
+                        </div>
+                        <div class="bottom-status">
+                            <div v-if="isMyRound" class="player-actions">
+                                <div class="action-btns-outer" v-if="game.roundId == 0">
+                                    <q-btn v-for="n in 4" :key="n" color="primary" :label="n-1" @click="callLandLord(n-1)" />
+                                </div>
+                                <div class="action-btns-outer" v-else>
+                                    <q-btn color="secondary" label="Pass" @click="move('pass')" />
+                                    <q-btn color="primary" label="Confirm" @click="move('card')" />
+                                </div>
+                            </div>
+                            <div v-else class="normal-status">
+                                <div class="text" v-show="myPlayer.lastMove == 'pass'">PASS</div>
+                                <div class="text" v-show="myPlayer.lastMove == 'card'"><q-icon name="arrow_upward" /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 q-pa-lg">
+                <div class="text-h6" style="height: 50px;">Console</div>
+                <q-scroll-area class="console q-pa-md">
+                    <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
+                </q-scroll-area>
+            </div>
+        </div>
+        <name-input />
+    </q-page>
+</template>
+
+<script>
+import NameInput from 'src/components/NameInput.vue'
+import { io } from "socket.io-client";
+import api from 'src/api';
+import { backendBasePath } from 'src/basePath';
+import { cards, cardsReference } from 'src/cards';
+export default {
+    components: { NameInput },
+    name: 'DouDiZhu',
+    data() {
+        return {
+            pageMode: null,
+            token: '',
+            socket: null,
+            game: {},
+            myHand: [],
+            selectedCards: [],
+            messages: []
+        }
+    },
+    methods: {
+        toggleCardSelect(cd) {
+            let index = this.selectedCards.indexOf(cd)
+            if (index == -1) {
+                this.selectedCards.push(cd)
+            }
+            else {
+                this.selectedCards.splice(index, 1)
+            }
+        },
+        callLandLord(num) {
+            if (num < 0 || num > 3 || !this.isMyRound) return
+            this.socket.emit('move', {
+                value: num,
+                type: 'landlord'
+            })
+        },
+        move(type) {
+            if (!this.isMyRound) return
+            if (type == 'pass') {
+                this.socket.emit('move', {
+                    type: 'pass'
+                })
+            }
+            else { //type == 'card'
+                if (this.selectedCards.length == 0) {
+                    this.$q.notify({
+                        message: 'You must select at least one card.',
+                        color: 'negative'
+                    })
+                    return
+                }
+                this.socket.emit('move', {
+                    value: this.selectedCards,
+                    type: 'card'
+                })
+            }
+        },
+        getCardInfo(cd) {
+            let card = cards[cd]
+            return {
+                id: cd,
+                imgURL: '/resources/cards/' + cardsReference[card.suit] + '_' + (cardsReference[card.value] ? cardsReference[card.value] : card.value) + '.svg'
+            }
+        },
+        lobbyReady() {
+            this.socket.emit('ready')
+        },
+        connect() {
+            this.socket = io(backendBasePath, {
+                reconnection: false
+            })
+            this.socket.on('connect', () => {
+                console.log('Socket Connected: ', this.socket.id)
+                this.addMessage({
+                    type: 'connected'
+                })
+                this.socket.emit('name', this.userName)
+                this.socket.emit('room', {
+                    token: this.token,
+                    roomId: this.roomId
+                })
+            })
+            this.socket.on('room', (res) => {
+                if (res.success) {
+                    this.token = res.token
+                    this.$q.localStorage.set('token', this.token)
+                }
+                else {
+                    this.$q.notify({
+                        color: 'negative',
+                        message: res.msg,
+                        position: 'top',
+                        timeout: 2000
+                    })
+                }
+            })
+            this.socket.on('update', (res) => {
+                console.log('update', res)
+                this.game = res
+                if (this.game.gameState == 'game') {
+                    if (this.pageMode !== 'game') this.pageMode = 'game'
+                }
+            })
+            this.socket.on('updateHand', (res) => {
+                console.log('updateHand', res)
+                this.myHand = res
+                this.selectedCards = this.selectedCards.filter(v => res.includes(v))
+            })
+            this.socket.on('msg', (res) => {
+                this.addMessage(res)
+            })
+            this.socket.on('notify', (res) => {
+                this.$q.notify(res)
+            })
+            this.socket.on('disconnect', () => {
+                console.log('Socket Disconnected.')
+                this.addMessage({
+                    type: 'disconnected'
+                })
+            })
+        },
+        addMessage(obj) {
+            let msg = ''
+            let value = obj.value
+            let color = null
+            switch (obj.type) {
+                case 'cardPassed':
+                    msg = `${value} passed.`
+                    break
+                case 'cardPlayed':
+                    msg = `${value[0]} played ${value[1]}.`
+                    break
+                case 'gameEnd':
+                    if (value) msg = 'Game Ended. The LandLord won!'
+                    else msg = 'Game Ended. The Civilians won!'
+                    color = 'primary'
+                    break
+                case 'callLandLord':
+                    msg = `${value[0]} called ${value[1]}.`
+                    break
+                case 'decideLandLord':
+                    msg = `No one has called a 3. Deciding LandLord automatically by the next biggest call...`
+                    break
+                case 'becameLandLord':
+                    msg = `${value} became LandLord.`
+                    break
+                case 'newRound':
+                    if (value == 0) msg = `Round ${value}: Call for LandLord.`
+                    else msg = `Round ${value}`
+                    break
+                case 'connected':
+                    msg = 'Connected to server.'
+                    color = 'positive'
+                    break
+                case 'disconnected':
+                    msg = 'You have been disconnected from the server. Try refreshing the page to reconnect, or check the server status.'
+                    color = 'negative'
+                    break
+                case 'playerJoin':
+                    if (this.game.gameState == 'lobby') {
+                        msg = `${value} joined the lobby.`
+                    }
+                    else {
+                        msg = `${value} reconnected.`
+                    }
+                    break
+                case 'playerLeave':
+                    if (this.game.gameState == 'lobby') {
+                        msg = `${value} left the lobby.`
+                    }
+                    else {
+                        msg = `${value} disconnected.`
+                    }
+                    break
+                case 'playerReady':
+                    msg = `${value} is ready to start.`
+                    break
+                case 'playerReadyCancel':
+                    msg = `${value} canceled ready.`
+                    break
+                default:
+                    msg = `${value}`
+                    break
+            }
+            this.messages.unshift({
+                text: msg,
+                color: color
+            })
+        },
+        init() {
+            api('/rooms/state', {
+                roomId: this.roomId
+            }).then(res => {
+                let r = res.data
+                console.log(r)
+                if (r.success) {
+                    if (r.gameState == 'lobby') {
+                        this.connect()
+                        this.pageMode = 'lobby'
+                    }
+                }
+                else {
+                    this.$q.notify({
+                        color: 'negative',
+                        message: 'Room not found.',
+                        position: 'top',
+                        timeout: 2000
+                    })
+                }
+            })
+        }
+    },
+    computed: {
+        roomId() {
+            return this.$route.params.roomId
+        },
+        nameIsSet() {
+            return this.$store.state.user.name != null && this.$store.state.user.name != ''
+        },
+        userName() {
+            return this.$store.state.user.name
+        },
+        myPlayer() {
+            if (this.game.players && this.token) return this.game.players.find(v => v.token == this.token)
+            else return {state: 'lobby'}
+        },
+        leftPlayer() {
+            if (this.game.gameState == 'game') return this.game.players[this.myPlayer.position+1 > 2 ? 0 : this.myPlayer.position+1]
+            else return {name: '', state: 'game'}
+        },
+        rightPlayer() {
+            if (this.game.gameState == 'game') return this.game.players[this.myPlayer.position-1 < 0 ? 2 : this.myPlayer.position-1]
+            else return {name: '', state: 'game'}
+        },
+        myCardList() {
+            return this.myHand.map(v => this.getCardInfo(v))
+        },
+        currentCardList() {
+            return this.game.currentCards.map(v => this.getCardInfo(v))
+        },
+        cardPoolList() {
+            return this.game.cardPool.map(v => this.getCardInfo(v))
+        },
+        isMyRound() {
+            return this.game.roundPos == this.myPlayer.position
+        }
+    },
+    watch: {
+        nameIsSet: {
+            handler: function(val) {
+                if (val == true) {
+                    this.init()
+                }
+            }
+        }
+    },
+    created() {
+        console.log('nameIsSet', this.nameIsSet)
+        console.log('userName', this.userName)
+        this.token = this.$q.localStorage.getItem('token')
+        if (!this.token) this.token = ''
+        console.log(this.token)
+        if (this.roomId == null || this.roomId == '') {
+            //this.pageMode = 'description'
+            this.$router.push('/')
+        }
+        else {
+            if (this.nameIsSet) {
+                this.init()
+            }
+        }
+    },
+    beforeRouteUpdate(to, from, next) {
+        if (this.socket && this.socket.connected) {
+            this.socket.disconnect()
+            this.socket = null
+        }
+        next()
+    },
+    beforeRouteLeave(to, from, next) {
+        if (this.socket && this.socket.connected) {
+            this.socket.disconnect()
+            this.socket = null
+        }
+        next()
+    },
+    beforeDestroy() {
+        if (this.socket && this.socket.connected) {
+            this.socket.disconnect()
+            this.socket = null
+        }
+    }
+}
+</script>
+
+<style lang="scss">
+.console {
+    height: calc( 100vh - 197px ); /* 51px (header) + 2*48px (2 q-pa-lg) + 50px (title) */
+    border: 1px solid $grey-4;
+}
+</style>
