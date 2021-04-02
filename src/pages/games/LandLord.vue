@@ -5,7 +5,7 @@
         </div>
         <div v-if="pageMode == 'lobby'" class="row">
             <div class="col q-pa-lg">
-                <div class="text-h4 q-my-md">DouDiZhu - Room Lobby</div>
+                <div class="text-h4 q-my-md">LandLord - Room Lobby</div>
                 <q-separator />
                 <div class="text-h5 q-my-md">Players ({{game.playerCount}}/{{game.playerLimit}})</div>
                 <q-list bordered separator>
@@ -48,7 +48,7 @@
                     </div>
                     <div :class="'game-container-bottom' + (game.roundPos == myPlayer.position ? ' current-player' : '')">
                         <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
-                            <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @click="toggleCardSelect(item.id)" />
+                            <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @mousedown="cardMouseDown(item.id)" @mouseover="cardMouseOver($event, item.id)" draggable="false" />
                         </div>
                         <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">Landlord</q-chip></div>
                     </div>
@@ -107,11 +107,13 @@
 import NameInput from 'src/components/NameInput.vue'
 import { io } from "socket.io-client";
 import api from 'src/api';
-import { backendBasePath } from 'src/basePath';
+import { backendBasePath, ports } from 'src/basePath';
 import { cards, cardsReference } from 'src/cards';
+const port = ports.landlord;
+const backendPath = backendBasePath + ':' + port;
 export default {
     components: { NameInput },
-    name: 'DouDiZhu',
+    name: 'LandLord',
     data() {
         return {
             pageMode: null,
@@ -124,6 +126,14 @@ export default {
         }
     },
     methods: {
+        cardMouseDown(n) {
+            this.toggleCardSelect(n)
+        },
+        cardMouseOver(ev, n) {
+            if (ev.buttons > 0) {
+                this.toggleCardSelect(n)
+            }
+        },
         toggleCardSelect(cd) {
             let index = this.selectedCards.indexOf(cd)
             if (index == -1) {
@@ -172,7 +182,7 @@ export default {
             this.socket.emit('ready')
         },
         connect() {
-            this.socket = io(backendBasePath, {
+            this.socket = io(backendPath, {
                 reconnection: false
             })
             this.socket.on('connect', () => {
@@ -294,7 +304,7 @@ export default {
             })
         },
         init() {
-            api('/rooms/state', {
+            api(port, '/rooms/state', {
                 roomId: this.roomId
             }).then(res => {
                 let r = res.data

@@ -44,7 +44,8 @@ export default {
       }
     },
     sendDebug() {
-      api('/debug').then(res => {
+      return
+      api(3000, '/debug').then(res => {
         console.log(res.data)
       })
     }
