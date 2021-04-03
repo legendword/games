@@ -51,7 +51,7 @@ export default {
     }
   },
   created() {
-    let savedName = this.$q.localStorage.getItem('name')
+    let savedName = process.env.NODE_ENV == 'development' ? this.$q.sessionStorage.getItem('name') : this.$q.localStorage.getItem('name')
     if (savedName) {
       this.$store.commit('setName', savedName)
     }

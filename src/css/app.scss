@@ -1,6 +1,11 @@
 // app global css in SCSS form
 
 //game container positioning & styles
+/*
+.game-container, .game-container-left, .game-container-right, .game-container-bottom, .game-container-middle, .game-container-middle .landlord-card-pool, .game-container-middle .left-status, .game-container-middle .right-status, .left-cards, .right-cards, .bottom-status, .bottom-cards {
+    border: 1px solid $dark;
+}
+*/
 .current-player {
     border: 2px solid $primary;
 }
@@ -9,7 +14,7 @@
     height: 100%;
     position: relative;
     min-height: 580px;
-    min-width: 800px;
+    min-width: 850px;
     word-break: break-all;
 }
 .game-container-left {
@@ -17,14 +22,14 @@
     left: 0;
     top: 0;
     height: 64%;
-    width: 20%;
+    width: 15%;
 }
 .game-container-right {
     position: absolute;
     right: 0;
     top: 0;
     height: 64%;
-    width: 20%;
+    width: 15%;
 }
 .game-container-bottom {
     position: absolute;
@@ -36,10 +41,10 @@
 }
 .game-container-middle {
     position: absolute;
-    left: 20%;
+    left: 15%;
     top: 0;
     height: 64%;
-    width: 60%;
+    width: 70%;
 }
 
 .game-container-middle .landlord-card-pool {
@@ -92,19 +97,57 @@
 .game-container-middle .bottom-status .action-btns-outer>* {
     margin: 0 10px;
 }
+.game-container-middle .left-cards .container-cards, .game-container-middle .right-cards .container-cards, .game-container-middle .bottom-cards .container-cards {
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 113.84px;
+}
+.game-container-middle .left-cards .container-cards {
+    margin-right: auto;
+    margin-left: 0;
+}
+.game-container-middle .right-cards .container-cards {
+    margin-left: auto;
+    margin-right: 0;
+}
+.game-container-middle .bottom-cards .container-cards {
+    margin-left: auto;
+    margin-right: auto;
+}
+.game-container-middle .left-cards {
+    position: absolute;
+    left: 3%;
+    top: 22%;
+    height: 40%;
+    width: 45%;
+}
+.game-container-middle .right-cards {
+    position: absolute;
+    right: 3%;
+    top: 22%;
+    height: 40%;
+    width: 45%;
+}
+.game-container-middle .bottom-cards {
+    position: absolute;
+    left: 10%;
+    bottom: 3%;
+    height: 32%;
+    width: 80%;
+}
 .game-container-middle .status {
     position: absolute;
-    top: 40%;
-    height: 20%;
+    top: 30%;
+    height: 15%;
     width: 10%;
 }
 .game-container-middle .left-status {
-    left: 0;
+    left: 5%;
 }
 .game-container-middle .right-status {
-    right: 0;
+    right: 5%;
 }
-.game-container-middle .status .text {
+.game-container-middle .status .text, .game-container-middle .normal-status .text {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,10 +188,13 @@
     line-height: 32px;
 }
 .game-container .container-cards-vertical {
-    width: 150px;
+    width: 142.31px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 8px;
+}
+.game-container .container-cards-vertical.game-card-outer-sm {
+    width: 71.155px;
 }
 .game-container .container-cards {
     height: 142.31px;
@@ -169,15 +215,24 @@
     height: 200px;
 }
 .game-card-outer-vertical .game-card {
-    transform: rotate(90deg) scale(1) translate(0, -142.31px);
+    transform: rotate(90deg) translate(0, -142.31px);
     transform-origin: top left;
     position: absolute;
     top: -135px;
 }
-.game-card-outer-vertical.game-card-outer-sm {
-    transform: scale(0.6);
-    transform-origin: top;
+.game-card-outer-vertical.game-card-outer-sm .game-card {
+    transform: rotate(90deg) translate(0, -71.155px);
 }
+.game-card-outer-md .game-card {
+    width: 80px;
+}
+.game-card-outer-sm .game-card {
+    width: 50px;
+}
+.game-card-outer-xs .game-card {
+    width: 35px;
+}
+/*
 .game-card-outer.game-card-outer-sm {
     transform: scale(0.6);
     transform-origin: top;
@@ -185,7 +240,7 @@
 .game-card-outer.game-card-outer-xs {
     transform: scale(0.4);
     transform-origin: top;
-}
+} */
 .game-card-outer .game-card  {
     position: absolute;
     left: -75px;

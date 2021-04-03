@@ -99,7 +99,8 @@ module.exports = function (/* ctx */) {
         'LocalStorage',
         'SessionStorage',
         'Dialog'
-      ]
+      ],
+      cssAddon: true
     },
 
     // animations: 'all', // --- includes all animations

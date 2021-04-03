@@ -38,14 +38,15 @@ export default {
     methods: {
         submitName() {
             if (this.username.length == 0) return
-            this.$q.localStorage.set('name', this.username)
+            if (process.env.NODE_ENV == 'development') this.$q.sessionStorage.set('name', this.username)
+            else this.$q.localStorage.set('name', this.username)
             this.$store.commit('setName', this.username)
             this.prompt = false
         }
     },
     created() {
         if (!this.storedName) {
-            let savedName = this.$q.localStorage.getItem('name')
+            let savedName = process.env.NODE_ENV == 'development' ? this.$q.sessionStorage.getItem('name') : this.$q.localStorage.getItem('name')
             if (!savedName) this.prompt = true
             else this.$store.commit('setName', savedName)
         }

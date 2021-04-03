@@ -4,7 +4,7 @@
             <!-- todo -->
         </div>
         <div v-if="pageMode == 'lobby'" class="row">
-            <div class="col q-pa-lg">
+            <div class="col-12 col-md q-pa-lg">
                 <div class="text-h4 q-my-md">LandLord - Room Lobby</div>
                 <q-separator />
                 <div class="text-h5 q-my-md">Players ({{game.playerCount}}/{{game.playerLimit}})</div>
@@ -18,7 +18,7 @@
                     <q-btn color="primary" :flat="myPlayer.state == 'ready'" :label="myPlayer.state == 'ready' ? 'Waiting for Others' : 'Start Game'" :disable="game.playerCount !== game.playerLimit" @click="lobbyReady" />
                 </div>
             </div>
-            <div class="col-3 q-pa-lg">
+            <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
                 <div class="text-h6" style="height: 50px;">Console</div>
                 <q-scroll-area class="console q-pa-md">
                     <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div v-if="pageMode == 'game'" class="row">
-            <div class="col">
+            <div class="col-12 col-md">
                 <div class="game-container">
                     <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
                         <div class="player-name">{{ leftPlayer.name }}</div>
@@ -34,7 +34,7 @@
                             <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord">LandLord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
-                            <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                            <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
                         </div>
                     </div>
                     <div :class="'game-container-right' + (game.roundPos == rightPlayer.position ? ' current-player' : '')">
@@ -43,7 +43,7 @@
                             <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord">LandLord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
-                            <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                            <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
                         </div>
                     </div>
                     <div :class="'game-container-bottom' + (game.roundPos == myPlayer.position ? ' current-player' : '')">
@@ -53,28 +53,44 @@
                         <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">Landlord</q-chip></div>
                     </div>
                     <div class="game-container-middle">
+                        <!--
                         <div class="card-pile">
                             <div class="container-cards game-card-outer" :style="{width: currentCardList.length*20+80 + 'px'}">
                                 <img v-for="(item, itid) in currentCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*20 + 'px'}" />
                             </div>
-                        </div>
+                        </div> -->
                         <div class="landlord-card-pool">
-                            <div v-if="game.cardPool.length > 0" class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
-                                <img v-for="(item, itid) in cardPoolList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*110 + 'px'}" />
+                            <div v-if="game.cardPool.length > 0" class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                <img v-for="(item, itid) in cardPoolList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*40 + 'px'}" />
                             </div>
-                            <div v-else class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
-                                <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*110 + 'px'}" />
+                            <div v-else class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*40 + 'px'}" />
                             </div>
                         </div>
-                        <div class="status left-status">
-                            <div class="text" v-show="leftPlayer.lastMove == 'pass'">PASS</div>
-                            <div class="text" v-show="leftPlayer.lastMove == 'card'"><q-icon name="arrow_forward" /></div>
+                        <div class="left-cards" v-if="Array.isArray(leftPlayer.lastMove)">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: (leftPlayedCardList.length>10?10:leftPlayedCardList.length)*18+80-18 + 'px'}">
+                                <img v-for="(item, itid) in leftPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid%10)*18 + 'px', top: itid>=10?'30px':'0'}" />
+                            </div>
                         </div>
-                        <div class="status right-status">
-                            <div class="text" v-show="rightPlayer.lastMove == 'pass'">PASS</div>
-                            <div class="text" v-show="rightPlayer.lastMove == 'card'"><q-icon name="arrow_backward" /></div>
+                        <div class="status left-status" v-else>
+                            <div class="text" v-if="leftPlayer.lastMove == 'pass'">PASS</div>
+                            <div class="text text-weight-medium" v-else>{{ leftPlayer.lastMove }}</div>
                         </div>
-                        <div class="bottom-status">
+                        <div class="right-cards" v-if="Array.isArray(rightPlayer.lastMove)">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: (rightPlayedCardList.length>10?10:rightPlayedCardList.length)*18+80-18 + 'px'}">
+                                <img v-for="(item, itid) in rightPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid%10)*18 + 'px', top: itid>=10?'30px':'0'}" />
+                            </div>
+                        </div>
+                        <div class="status right-status" v-else>
+                            <div class="text" v-if="rightPlayer.lastMove == 'pass'">PASS</div>
+                            <div class="text text-weight-medium" v-else>{{ rightPlayer.lastMove }}</div>
+                        </div>
+                        <div class="bottom-cards" v-if="(!isMyRound && Array.isArray(myPlayer.lastMove)) || game.gameEnded">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: myPlayedCardList.length*18+80-18 + 'px'}">
+                                <img v-for="(item, itid) in myPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: itid*18 + 'px'}" />
+                            </div>
+                        </div>
+                        <div class="bottom-status" v-else>
                             <div v-if="isMyRound" class="player-actions">
                                 <div class="action-btns-outer" v-if="game.roundId == 0">
                                     <q-btn v-for="n in 4" :key="n" color="primary" :label="n-1" @click="callLandLord(n-1)" />
@@ -85,14 +101,14 @@
                                 </div>
                             </div>
                             <div v-else class="normal-status">
-                                <div class="text" v-show="myPlayer.lastMove == 'pass'">PASS</div>
-                                <div class="text" v-show="myPlayer.lastMove == 'card'"><q-icon name="arrow_upward" /></div>
+                                <div class="text" v-if="myPlayer.lastMove == 'pass'">PASS</div>
+                                <div class="text text-weight-medium" v-else>{{ myPlayer.lastMove }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-3 q-pa-lg">
+            <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
                 <div class="text-h6" style="height: 50px;">Console</div>
                 <q-scroll-area class="console q-pa-md">
                     <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
@@ -199,7 +215,8 @@ export default {
             this.socket.on('room', (res) => {
                 if (res.success) {
                     this.token = res.token
-                    this.$q.localStorage.set('token', this.token)
+                    if (process.env.NODE_ENV) this.$q.sessionStorage.set('token', this.token)
+                    else this.$q.localStorage.set('token', this.token)
                 }
                 else {
                     this.$q.notify({
@@ -354,6 +371,15 @@ export default {
         currentCardList() {
             return this.game.currentCards.map(v => this.getCardInfo(v))
         },
+        leftPlayedCardList() {
+            return Array.isArray(this.leftPlayer.lastMove) ? this.leftPlayer.lastMove.map(v => this.getCardInfo(v)) : []
+        },
+        rightPlayedCardList() {
+            return Array.isArray(this.rightPlayer.lastMove) ? this.rightPlayer.lastMove.map(v => this.getCardInfo(v)) : []
+        },
+        myPlayedCardList() {
+            return Array.isArray(this.myPlayer.lastMove) ? this.myPlayer.lastMove.map(v => this.getCardInfo(v)) : []
+        },
         cardPoolList() {
             return this.game.cardPool.map(v => this.getCardInfo(v))
         },
@@ -371,9 +397,8 @@ export default {
         }
     },
     created() {
-        console.log('nameIsSet', this.nameIsSet)
         console.log('userName', this.userName)
-        this.token = this.$q.localStorage.getItem('token')
+        this.token = process.env.NODE_ENV ? this.$q.sessionStorage.getItem('token') : this.$q.localStorage.getItem('token')
         if (!this.token) this.token = ''
         console.log(this.token)
         if (this.roomId == null || this.roomId == '') {

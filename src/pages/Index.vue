@@ -52,16 +52,8 @@
             </div>
         </div>
         <!--
-        <div class="game-card-outer game-card-outer-sm">
-            <img src="/resources/cards/clubs_ace.svg" class="game-card" />
-            <img src="/resources/cards/spades_4.svg" class="game-card" />
-        </div>
-        <div class="game-card-outer-vertical game-card-outer-sm">
-            <img src="/resources/cardbacks/blue.svg" class="game-card" />
-            <img src="/resources/cardbacks/blue.svg" class="game-card" />
-        </div>
         <div class="row">
-            <div class="col">
+            <div class="col-12 col-md">
                 <div class="game-container">
                     <div class="game-container-left">
                         <div class="player-name">leftPlayer.nameleftPlayer.nameleftPlayer.nameleftPlayer.name</div>
@@ -69,7 +61,7 @@
                             <q-chip size="sm" icon="terrain">Landlord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
-                            <img v-for="n in 20" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                            <img v-for="n in 20" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
                         </div>
                     </div>
                     <div class="game-container-right">
@@ -78,7 +70,7 @@
                             <q-chip size="sm" icon="terrain">Landlord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
-                            <img v-for="n in 2" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*20 + 'px'}" /> 
+                            <img v-for="n in 2" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
                         </div>
                     </div>
                     <div class="game-container-bottom">
@@ -89,33 +81,48 @@
                         <div class="text-center text-weight-medium bottom-player-name">myPlayer.name <q-chip size="sm" icon="terrain">Landlord</q-chip></div>
                     </div>
                     <div class="game-container-middle">
-                        <div class="card-pile">
+                        <div class="card-pile" v-show="false">
                             <div class="container-cards game-card-outer" :style="{width: 18*20+80 + 'px'}">
                                 <img v-for="n in 18" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: (n-1)*20 + 'px'}" /> 
                             </div>
                         </div>
                         <div class="landlord-card-pool">
-                            <div v-show="false" class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
-                                <img v-for="n in 3" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: (n-1)*110 + 'px'}" />
+                            <div v-show="true" class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                <img v-for="n in 3" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: (n-1)*40 + 'px'}" />
                             </div>
-                            <div v-show="true" class="container-cards game-card-outer game-card-outer-xs" :style="{width: 3*110-10 + 'px'}">
-                                <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*110 + 'px'}" />
+                            <div v-show="false" class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*40 + 'px'}" />
+                            </div>
+                        </div>
+                        <div class="left-cards">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: (12>10?10:12)*18+80-18 + 'px'}">
+                                <img v-for="n in 12" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: ((n-1)%10)*18 + 'px', top: n-1>=10?'30px':'0'}" />
                             </div>
                         </div>
                         <div class="status left-status">
-                            <div class="text" v-show="false">PASS</div>
-                            <div class="text" v-show="true"><q-icon name="arrow_forward" /></div>
+                            <div class="text" v-show="true">PASS</div>
+                            <div class="text" v-show="false"><q-icon name="arrow_forward" /></div>
+                        </div>
+                        <div class="right-cards" v-show="false">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: 10*18+80-18 + 'px'}">
+                                <img v-for="n in 14" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: ((n-1)%10)*18 + 'px', top: n-1>=10?'30px':'0'}" />
+                            </div>
                         </div>
                         <div class="status right-status">
                             <div class="text" v-show="false">PASS</div>
-                            <div class="text" v-show="true"><q-icon name="arrow_backward" /></div>
+                            <div class="text text-weight-medium" v-show="true">4</div>
+                        </div>
+                        <div class="bottom-cards">
+                            <div class="container-cards game-card-outer game-card-outer-md" :style="{width: 20*18+80-18 + 'px'}">
+                                <img v-for="n in 20" :key="n" src="/resources/cards/clubs_ace.svg" class="game-card" :style="{left: (n-1)*18 + 'px'}" />
+                            </div>
                         </div>
                         <div class="bottom-status">
-                            <div v-show="false" class="normal-status">
+                            <div v-show="true" class="normal-status">
                                 <div class="text" v-show="true">PASS</div>
                                 <div class="text" v-show="false"><q-icon name="arrow_upward" /></div>
                             </div>
-                            <div v-show="true" class="player-actions">
+                            <div v-show="false" class="player-actions">
                                 <div class="action-btns-outer">
                                     <q-btn v-for="n in 4" :key="n" color="primary" :label="n-1" />
                                 </div>
@@ -125,7 +132,7 @@
                 </div>
                 
             </div>
-            <div class="col-3 q-pa-lg">
+            <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
                 <div class="text-h6" style="height: 50px;">Console</div>
                 <q-scroll-area class="console q-pa-md">
                     <div class="q-mb-sm" v-for="n in 100" :key="n">{{n}}</div>
@@ -251,6 +258,7 @@ export default {
         }
     },
     created() {
+        console.log(process.env.NODE_ENV, version)
         this.fetchBaseInfo()
     }
 }
