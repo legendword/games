@@ -50,7 +50,7 @@
                         <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
                             <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @mousedown="cardMouseDown(item.id)" @mouseover="cardMouseOver($event, item.id)" draggable="false" />
                         </div>
-                        <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">Landlord</q-chip></div>
+                        <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">LandLord</q-chip></div>
                     </div>
                     <div class="game-container-middle">
                         <!--
@@ -106,6 +106,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="game-container-mask" v-if="showEndScreen"></div>
+                    <div class="game-end-container" v-if="showEndScreen">
+                        <q-card>
+                            <q-card-section>
+                                <div v-if="endScreenWin" class="text-h5 text-center q-py-md text-positive">You Won!</div>
+                                <div v-else class="text-h5 text-center q-py-md text-negative">You Lost.</div>
+                            </q-card-section>
+                            <q-card-section class="flex justify-center">
+                                <q-btn class="q-mx-md" color="secondary" label="Quit" @click="quitGame" />
+                                <q-btn class="q-mx-md" color="primary" :flat="iPlayAgain" :disable="!game.playAgain" :label="playAgainLabel" @click="playAgain" />
+                            </q-card-section>
+                        </q-card>
+                    </div>
                 </div>
             </div>
             <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
@@ -138,10 +151,18 @@ export default {
             game: {},
             myHand: [],
             selectedCards: [],
-            messages: []
+            messages: [],
+            showEndScreen: false,
+            endScreenWin: true
         }
     },
     methods: {
+        quitGame() {
+            this.$router.push('/')
+        },
+        playAgain() {
+            this.socket.emit('playAgain')
+        },
         cardMouseDown(n) {
             this.toggleCardSelect(n)
         },
@@ -239,6 +260,11 @@ export default {
                 this.myHand = res
                 this.selectedCards = this.selectedCards.filter(v => res.includes(v))
             })
+            this.socket.on('gameRestart', () => {
+                console.log('gameRestart')
+                this.showEndScreen = false
+                this.messages = []
+            })
             this.socket.on('msg', (res) => {
                 this.addMessage(res)
             })
@@ -266,6 +292,10 @@ export default {
                 case 'gameEnd':
                     if (value) msg = 'Game Ended. The LandLord won!'
                     else msg = 'Game Ended. The Civilians won!'
+                    this.endScreenWin = value ? this.myPlayer.isLandLord : !this.myPlayer.isLandLord
+                    setTimeout(() => {
+                        this.showEndScreen = true
+                    }, 2000)
                     color = 'primary'
                     break
                 case 'callLandLord':
@@ -385,6 +415,13 @@ export default {
         },
         isMyRound() {
             return this.game.roundPos == this.myPlayer.position
+        },
+        iPlayAgain() {
+            return this.game.playAgain ? this.game.playAgain.includes(this.token) : false
+        },
+        playAgainLabel() {
+            if (!this.game.playAgain) return 'Play Again'
+            return (this.game.playAgain.includes(this.token) ? 'Waiting for Others' : 'Play Again') + ' ' + this.game.playAgain.length
         }
     },
     watch: {

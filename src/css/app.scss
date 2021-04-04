@@ -17,6 +17,29 @@
     min-width: 850px;
     word-break: break-all;
 }
+.game-container-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $dark;
+    opacity: 0.3
+}
+.game-container .game-end-container {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 35%;
+}
+.game-container .game-end-container>* {
+    width: 100%;
+    height: 100%;
+}
 .game-container-left {
     position: absolute;
     left: 0;

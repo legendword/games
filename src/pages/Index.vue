@@ -129,8 +129,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="game-container-mask"></div>
+                    <div class="game-end-container">
+                        <q-card>
+                            <q-card-section>
+                                <div v-show="false" class="text-h5 text-center q-py-md text-positive">You Won!</div>
+                                <div v-show="true" class="text-h5 text-center q-py-md text-negative">You Lost.</div>
+                            </q-card-section>
+                            <q-card-section class="flex justify-center">
+                                <q-btn class="q-mx-md" color="secondary" label="Quit" />
+                                <q-btn class="q-mx-md" color="primary" label="Play Again" />
+                            </q-card-section>
+                        </q-card>
+                    </div>
                 </div>
-                
             </div>
             <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
                 <div class="text-h6" style="height: 50px;">Console</div>

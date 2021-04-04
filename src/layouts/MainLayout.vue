@@ -12,7 +12,7 @@
           Legendword Games
         </q-toolbar-title>
 
-        <q-btn dense flat round icon="bug_report" @click="sendDebug" />
+        <q-btn v-show="false" dense flat round icon="bug_report" @click="sendDebug" />
         <q-btn v-show="false" dense flat round icon="menu" @click="right = !right" />
       </q-toolbar>
     </q-header>
