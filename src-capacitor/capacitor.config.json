@@ -1,0 +1,7 @@
+{
+  "appId": "com.legendword.games",
+  "appName": "Legendword Games",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

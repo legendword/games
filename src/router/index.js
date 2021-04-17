@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import routes from './routes'
+import mobileRoutes from './mobileRoutes'
+import { Platform } from 'quasar'
 
 Vue.use(VueRouter)
 
@@ -15,9 +17,10 @@ Vue.use(VueRouter)
  */
 
 export default function (/* { store, ssrContext } */) {
+  console.log(Platform.is)
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
-    routes,
+    routes: Platform.is.mobile ? mobileRoutes : routes, //! change to Platform.is.capacitor later
 
     // Leave these as they are and change in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode

@@ -1,5 +1,11 @@
 // app global css in SCSS form
 
+//mobile relative positioning
+.mobile-page {
+    overflow: hidden;
+    position: relative;
+}
+
 //game container positioning & styles
 /*
 .game-container, .game-container-left, .game-container-right, .game-container-bottom, .game-container-middle, .game-container-middle .landlord-card-pool, .game-container-middle .left-status, .game-container-middle .right-status, .left-cards, .right-cards, .bottom-status, .bottom-cards {

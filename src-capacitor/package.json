@@ -1,0 +1,11 @@
+{
+  "name": "games",
+  "version": "1.0",
+  "description": "Online platform hosting games for playing with friends.",
+  "author": "Legendword <zwh@legendword.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}

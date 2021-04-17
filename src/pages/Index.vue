@@ -176,15 +176,14 @@ import NameInput from 'src/components/NameInput.vue'
 import api from '../api'
 import { frontendBasePath, ports } from 'src/basePath'
 import version from 'src/version'
+import gameList from 'src/gameList'
 export default {
     components: { NameInput },
     name: 'Index',
     data() {
         return {
             inputRoomURL: '',
-            gameList: [
-                { name: 'landlord', label: 'LandLord', link: '/landlord', desc: 'Classic Chinese LandLord card game, played with 3 players and one set of 54 cards.' }
-            ],
+            gameList: gameList,
             gameStatus: {
                 landlord: {
                     status: 'unknown',
