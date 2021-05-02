@@ -1,32 +1,58 @@
 <template>
-    <q-page class="q-pa-lg">
-        <div v-if="pageMode == 'description'">
-            <!-- todo -->
-        </div>
-        <div v-if="pageMode == 'lobby'" class="row">
-            <div class="col-12 col-md q-pa-lg">
-                <div class="text-h4 q-my-md">LandLord - Room Lobby</div>
-                <q-separator />
-                <div class="text-h5 q-my-md">Players ({{game.playerCount}}/{{game.playerLimit}})</div>
-                <q-list bordered separator>
-                    <q-item v-for="player in game.players" :key="player.token">
-                        <q-item-section class="text-subtitle2 q-py-sm" style="font-size: 1.1rem;">{{player.name}}</q-item-section>
-                        <q-item-section side><q-icon v-if="player.state == 'ready'" color="positive" name="done" /></q-item-section>
-                    </q-item>
-                </q-list>
-                <div class="q-mt-lg text-center">
-                    <q-btn color="primary" :flat="myPlayer.state == 'ready'" :label="myPlayer.state == 'ready' ? 'Waiting for Others' : 'Start Game'" :disable="game.playerCount !== game.playerLimit" @click="lobbyReady" />
+    <div>
+        <q-page v-if="$q.platform.is.mobile">
+            <div v-if="pageMode == 'lobby'">
+                <div class="text-h5 text-center q-py-sm">LandLord</div>
+                <div class="row">
+                    <div class="col-4 q-pa-md">
+                        <q-card class="q-mt-md" v-if="game.players.length >= 2">
+                            <q-card-section>
+                                <div class="text-h5 text-center">{{ game.players[1].name }}</div>
+                            </q-card-section>
+                            <q-card-section class="q-py-xs">
+                                <q-avatar class="block-center" size="60px">
+                                    <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
+                                </q-avatar>
+                            </q-card-section>
+                            <q-card-section>
+                                <q-icon v-if="game.players[1].state == 'ready'" color="positive" name="done" size="md" class="text-center width-100" />
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-4 q-pa-md">
+                        <q-card v-if="game.players.length >= 1">
+                            <q-card-section>
+                                <div class="text-h5 text-center">{{ game.players[0].name }}</div>
+                            </q-card-section>
+                            <q-card-section class="q-py-xs">
+                                <q-avatar class="block-center" size="60px">
+                                    <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
+                                </q-avatar>
+                            </q-card-section>
+                            <q-card-section>
+                                <q-icon v-if="game.players[0].state == 'ready'" color="positive" name="done" size="md" class="text-center width-100" />
+                            </q-card-section>
+                        </q-card>
+                        <q-btn class="q-mt-lg block-center" color="primary" :flat="myPlayer.state == 'ready'" :label="myPlayer.state == 'ready' ? 'Waiting for Others' : 'Start Game'" :disable="game.playerCount !== game.playerLimit" @click="lobbyReady" />
+                    </div>
+                    <div class="col-4 q-pa-md">
+                        <q-card class="q-mt-md" v-if="game.players.length == 3">
+                            <q-card-section>
+                                <div class="text-h5 text-center">{{ game.players[2].name }}</div>
+                            </q-card-section>
+                            <q-card-section class="q-py-xs">
+                                <q-avatar class="block-center" size="60px">
+                                    <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
+                                </q-avatar>
+                            </q-card-section>
+                            <q-card-section>
+                                <q-icon v-if="game.players[2].state == 'ready'" color="positive" name="done" size="md" class="text-center width-100" />
+                            </q-card-section>
+                        </q-card>
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
-                <div class="text-h6" style="height: 50px;">Console</div>
-                <q-scroll-area class="console q-pa-md">
-                    <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
-                </q-scroll-area>
-            </div>
-        </div>
-        <div v-if="pageMode == 'game'" class="row">
-            <div class="col-12 col-md">
+            <div v-else-if="pageMode == 'game'">
                 <div class="game-container">
                     <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
                         <div class="player-name">{{ leftPlayer.name }}</div>
@@ -121,15 +147,139 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
-                <div class="text-h6" style="height: 50px;">Console</div>
-                <q-scroll-area class="console q-pa-md">
-                    <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
-                </q-scroll-area>
+        </q-page>
+        <q-page class="q-pa-lg" v-else>
+            <div v-if="pageMode == 'description'">
+                <!-- todo -->
             </div>
-        </div>
+            <div v-if="pageMode == 'lobby'" class="row">
+                <div class="col-12 col-md q-pa-lg">
+                    <div class="text-h4 q-my-md">LandLord - Room Lobby</div>
+                    <q-separator />
+                    <div class="text-h5 q-my-md">Players ({{game.playerCount}}/{{game.playerLimit}})</div>
+                    <q-list bordered separator>
+                        <q-item v-for="player in game.players" :key="player.token">
+                            <q-item-section class="text-subtitle2 q-py-sm" style="font-size: 1.1rem;">{{player.name}}</q-item-section>
+                            <q-item-section side><q-icon v-if="player.state == 'ready'" color="positive" name="done" /></q-item-section>
+                        </q-item>
+                    </q-list>
+                    <div class="q-mt-lg text-center">
+                        <q-btn color="primary" :flat="myPlayer.state == 'ready'" :label="myPlayer.state == 'ready' ? 'Waiting for Others' : 'Start Game'" :disable="game.playerCount !== game.playerLimit" @click="lobbyReady" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
+                    <div class="text-h6" style="height: 50px;">Console</div>
+                    <q-scroll-area class="console q-pa-md">
+                        <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
+                    </q-scroll-area>
+                </div>
+            </div>
+            <div v-if="pageMode == 'game'" class="row">
+                <div class="col-12 col-md">
+                    <div class="game-container">
+                        <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
+                            <div class="player-name">{{ leftPlayer.name }}</div>
+                            <div class="text-center player-chips">
+                                <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord">LandLord</q-chip>
+                            </div>
+                            <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
+                                <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
+                            </div>
+                        </div>
+                        <div :class="'game-container-right' + (game.roundPos == rightPlayer.position ? ' current-player' : '')">
+                            <div class="player-name">{{ rightPlayer.name }}</div>
+                            <div class="text-center player-chips">
+                                <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord">LandLord</q-chip>
+                            </div>
+                            <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
+                                <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
+                            </div>
+                        </div>
+                        <div :class="'game-container-bottom' + (game.roundPos == myPlayer.position ? ' current-player' : '')">
+                            <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
+                                <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @mousedown="cardMouseDown(item.id)" @mouseover="cardMouseOver($event, item.id)" draggable="false" />
+                            </div>
+                            <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">LandLord</q-chip></div>
+                        </div>
+                        <div class="game-container-middle">
+                            <!--
+                            <div class="card-pile">
+                                <div class="container-cards game-card-outer" :style="{width: currentCardList.length*20+80 + 'px'}">
+                                    <img v-for="(item, itid) in currentCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*20 + 'px'}" />
+                                </div>
+                            </div> -->
+                            <div class="landlord-card-pool">
+                                <div v-if="game.cardPool.length > 0" class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                    <img v-for="(item, itid) in cardPoolList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid)*40 + 'px'}" />
+                                </div>
+                                <div v-else class="container-cards game-card-outer game-card-outer-xs" :style="{width: '115px'}">
+                                    <img v-for="n in 3" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{left: (n-1)*40 + 'px'}" />
+                                </div>
+                            </div>
+                            <div class="left-cards" v-if="Array.isArray(leftPlayer.lastMove)">
+                                <div class="container-cards game-card-outer game-card-outer-md" :style="{width: (leftPlayedCardList.length>10?10:leftPlayedCardList.length)*16+80-16 + 'px'}">
+                                    <img v-for="(item, itid) in leftPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid%10)*16 + 'px', top: itid>=10?'30px':'0'}" />
+                                </div>
+                            </div>
+                            <div class="status left-status" v-else>
+                                <div class="text" v-if="leftPlayer.lastMove == 'pass'">PASS</div>
+                                <div class="text text-weight-medium" v-else>{{ leftPlayer.lastMove }}</div>
+                            </div>
+                            <div class="right-cards" v-if="Array.isArray(rightPlayer.lastMove)">
+                                <div class="container-cards game-card-outer game-card-outer-md" :style="{width: (rightPlayedCardList.length>10?10:rightPlayedCardList.length)*16+80-16 + 'px'}">
+                                    <img v-for="(item, itid) in rightPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: (itid%10)*16 + 'px', top: itid>=10?'30px':'0'}" />
+                                </div>
+                            </div>
+                            <div class="status right-status" v-else>
+                                <div class="text" v-if="rightPlayer.lastMove == 'pass'">PASS</div>
+                                <div class="text text-weight-medium" v-else>{{ rightPlayer.lastMove }}</div>
+                            </div>
+                            <div class="bottom-cards" v-if="(!isMyRound && Array.isArray(myPlayer.lastMove)) || game.gameEnded">
+                                <div class="container-cards game-card-outer game-card-outer-md" :style="{width: myPlayedCardList.length*16+80-16 + 'px'}">
+                                    <img v-for="(item, itid) in myPlayedCardList" :key="item.id" :src="item.imgURL" class="game-card" :style="{left: itid*16 + 'px'}" />
+                                </div>
+                            </div>
+                            <div class="bottom-status" v-else>
+                                <div v-if="isMyRound" class="player-actions">
+                                    <div class="action-btns-outer" v-if="game.roundId == 0">
+                                        <q-btn v-for="n in 4" :key="n" color="primary" :label="n-1" @click="callLandLord(n-1)" />
+                                    </div>
+                                    <div class="action-btns-outer" v-else>
+                                        <q-btn color="secondary" label="Pass" @click="move('pass')" />
+                                        <q-btn color="primary" label="Confirm" @click="move('card')" />
+                                    </div>
+                                </div>
+                                <div v-else class="normal-status">
+                                    <div class="text" v-if="myPlayer.lastMove == 'pass'">PASS</div>
+                                    <div class="text text-weight-medium" v-else>{{ myPlayer.lastMove }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="game-container-mask" v-if="showEndScreen"></div>
+                        <div class="game-end-container" v-if="showEndScreen">
+                            <q-card>
+                                <q-card-section>
+                                    <div v-if="endScreenWin" class="text-h5 text-center q-py-md text-positive">You Won!</div>
+                                    <div v-else class="text-h5 text-center q-py-md text-negative">You Lost.</div>
+                                </q-card-section>
+                                <q-card-section class="flex justify-center">
+                                    <q-btn class="q-mx-md" color="secondary" label="Quit" @click="quitGame" />
+                                    <q-btn class="q-mx-md" color="primary" :flat="iPlayAgain" :disable="!game.playAgain" :label="playAgainLabel" @click="playAgain" />
+                                </q-card-section>
+                            </q-card>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-3 q-pa-sm q-pa-lg-lg">
+                    <div class="text-h6" style="height: 50px;">Console</div>
+                    <q-scroll-area class="console q-pa-md">
+                        <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
+                    </q-scroll-area>
+                </div>
+            </div>
+        </q-page>
         <name-input />
-    </q-page>
+    </div>
 </template>
 
 <script>
@@ -212,7 +362,7 @@ export default {
             let card = cards[cd]
             return {
                 id: cd,
-                imgURL: '/resources/cards/' + cardsReference[card.suit] + '_' + (cardsReference[card.value] ? cardsReference[card.value] : card.value) + '.svg'
+                imgURL: '/resources/cards/' + cardsReference[card.suit] + '_' + (cardsReference[card.value] ? cardsReference[card.value] : card.value) + '.png'
             }
         },
         lobbyReady() {
@@ -475,5 +625,13 @@ export default {
 .console {
     height: calc( 100vh - 197px ); /* 51px (header) + 2*48px (2 q-pa-lg) + 50px (title) */
     border: 1px solid $grey-4;
+}
+.block-center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.width-100 {
+    width: 100%;
 }
 </style>

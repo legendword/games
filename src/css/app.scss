@@ -277,6 +277,8 @@
 .game-card {
     width: 100px;
     cursor: pointer;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
 }
 .game-card-outer .game-card-selected {
     top: -20px;

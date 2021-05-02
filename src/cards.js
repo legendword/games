@@ -1,15 +1,11 @@
 export const cardsReference = {
-    1: 'ace',
-    11: 'jack',
-    12: 'queen',
-    13: 'king',
     14: 'black',
     15: 'red',
     'C': 'clubs',
     'D': 'diamonds',
     'H': 'hearts',
     'S': 'spades',
-    'J': 'joker'
+    'J': 'king'
 };
 export const cards = {
     'AC': { value: 1, suit: 'C' },
