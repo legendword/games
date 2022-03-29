@@ -157,14 +157,11 @@ export default {
         play() {
             let chosen = null;
             if (this.mode == "random") {
-                let index = Math.floor(Math.random() * this.totalWordCount);
-                for (let i in words) {
-                    if (index >= words[i].length) {
-                        index -= words[i].length;
-                        continue;
-                    }
-                    chosen = words[i][index];
-                }
+                let keys = Object.keys(words);
+                let nind = Math.floor(Math.random() * keys.length);
+                let i = keys[nind];
+                let index = Math.floor(Math.random() * words[i].length);
+                chosen = words[i][index];
             }
             else {
                 let index = Math.floor(Math.random() * words[this.mode].length);
