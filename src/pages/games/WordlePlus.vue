@@ -240,9 +240,11 @@ export default {
             border: 1px solid grey;
             text-transform: uppercase;
 
+            /*
             &.entered {
                 border: 1px solid var(--q-color-primary);
             }
+            */
             &.correct {
                 background-color: $positive;
                 color: #fff;

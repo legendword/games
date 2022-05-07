@@ -8,7 +8,8 @@ const routes = [
       { path: 'sp', component: () => import('pages/Singleplayer.vue') },
       { path: 'mp', component: () => import('pages/Multiplayer.vue') },
       { path: 'landlord/:roomId', component: () => import('pages/games/LandLord.vue') },
-      { path: 'wordle+', component: () => import('pages/games/WordlePlus.vue') }
+      { path: 'wordle+', component: () => import('pages/games/WordlePlus.vue') },
+      { path: '2048', component: () => import('pages/games/2048.vue') },
     ]
   },
 

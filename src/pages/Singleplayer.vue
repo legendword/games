@@ -2,7 +2,7 @@
     <q-page padding>
         <div class="text-center text-h4 q-mt-md">Singleplayer Games</div>
         <div class="game-list">
-            <div v-for="game in gameList" :key="game.name" class="game-list-card row" flat>
+            <div v-for="game in gameList" :key="game.name" class="q-my-lg game-list-card row" flat>
                 <div class="col-9 col-md-10 bg-primary text-white q-pa-md">
                     <div class="text-h5">{{ game.label }}</div>
                     <div>{{ game.desc }}</div>
