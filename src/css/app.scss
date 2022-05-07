@@ -1,5 +1,53 @@
 // app global css in SCSS form
 
+// overwrite default quasar dark background color
+body.body--dark {
+    background: #0e1117;
+    color: #c9d1d9;
+}
+
+// better-looking link styles
+.link, .link:link, .link:visited {
+    color: inherit;
+    text-decoration: underline;
+}
+.link:hover, .link:active {
+    color: var(--q-color-primary);
+}
+
+// floating animations/transitions
+
+@keyframes floating {
+    0% {
+        top: 0px;
+    }
+    50% {
+        top: -10px;
+    }
+    100% {
+        top: 0px;
+    }
+}
+.floating-text {
+    position: relative;
+    animation-name: floating;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+}
+.float-on-hover { /* to be used with the q-btn "push" property */
+    position: relative;
+    transition: transform 0.3s;
+
+    &:hover {
+        transform: translateY(-3px);
+    }
+}
+
+// a QoL fix for mobile devices with keyboard input (Wordle+)
+.disable-double-tap-zoom {
+    touch-action: manipulation;
+}
+
 //mobile relative positioning
 .mobile-page {
     overflow: hidden;

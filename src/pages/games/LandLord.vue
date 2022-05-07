@@ -57,7 +57,7 @@
                     <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
                         <div class="player-name">{{ leftPlayer.name }}</div>
                         <div class="text-center player-chips">
-                            <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord">LandLord</q-chip>
+                            <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord" color="accent">LandLord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
                             <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
@@ -66,7 +66,7 @@
                     <div :class="'game-container-right' + (game.roundPos == rightPlayer.position ? ' current-player' : '')">
                         <div class="player-name">{{ rightPlayer.name }}</div>
                         <div class="text-center player-chips">
-                            <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord">LandLord</q-chip>
+                            <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord" color="accent">LandLord</q-chip>
                         </div>
                         <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
                             <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
@@ -76,7 +76,7 @@
                         <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
                             <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @mousedown="cardMouseDown(item.id)" @mouseover="cardMouseOver($event, item.id)" draggable="false" />
                         </div>
-                        <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">LandLord</q-chip></div>
+                        <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord" color="accent">LandLord</q-chip></div>
                     </div>
                     <div class="game-container-middle">
                         <!--
@@ -180,7 +180,7 @@
                         <div :class="'game-container-left' + (game.roundPos == leftPlayer.position ? ' current-player' : '')">
                             <div class="player-name">{{ leftPlayer.name }}</div>
                             <div class="text-center player-chips">
-                                <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord">LandLord</q-chip>
+                                <q-chip size="sm" icon="terrain" v-show="leftPlayer.isLandLord" color="accent">LandLord</q-chip>
                             </div>
                             <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
                                 <img v-for="n in game.cardCounts[leftPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
@@ -189,7 +189,7 @@
                         <div :class="'game-container-right' + (game.roundPos == rightPlayer.position ? ' current-player' : '')">
                             <div class="player-name">{{ rightPlayer.name }}</div>
                             <div class="text-center player-chips">
-                                <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord">LandLord</q-chip>
+                                <q-chip size="sm" icon="terrain" v-show="rightPlayer.isLandLord" color="accent">LandLord</q-chip>
                             </div>
                             <div class="container-cards-vertical game-card-outer-vertical game-card-outer-sm">
                                 <img v-for="n in game.cardCounts[rightPlayer.position]" :key="n" src="/resources/cardbacks/blue.svg" class="game-card" :style="{top: (n-1)*12 + 'px'}" /> 
@@ -199,7 +199,7 @@
                             <div class="container-cards game-card-outer" :style="{width: myCardList.length*20+80 + 'px'}">
                                 <img v-for="(item, itid) in myCardList" :key="item.id" :src="item.imgURL" :class="'game-card' + (selectedCards.includes(item.id) ? ' game-card-selected' : '')" :style="{left: (itid)*20 + 'px'}" @mousedown="cardMouseDown(item.id)" @mouseover="cardMouseOver($event, item.id)" draggable="false" />
                             </div>
-                            <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord">LandLord</q-chip></div>
+                            <div class="text-center text-weight-medium bottom-player-name">{{ myPlayer.name }} <q-chip size="sm" icon="terrain" v-show="myPlayer.isLandLord" color="accent">LandLord</q-chip></div>
                         </div>
                         <div class="game-container-middle">
                             <!--

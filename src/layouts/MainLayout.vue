@@ -1,60 +1,70 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+    <q-layout view="hHh lpR fFf">
 
-    <q-header bordered class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title class="cursor-pointer" @click="backHome">
-          <!--
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
-          </q-avatar>
-          -->
-          Legendword Games
-        </q-toolbar-title>
+        <q-header elevated class="bg-dark">
+            <div class="row no-wrap justify-between">
+                <div class="row no-wrap">
+                    <!--
+                    <div class="cursor-pointer" style="line-height: 60px;" @click="backHome">
+                        <q-avatar>
+                            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
+                        </q-avatar>
+                        Legendword Games
+                    </div>
+                    -->
 
-        <q-btn v-show="false" dense flat round icon="bug_report" @click="sendDebug" />
-        <q-btn v-show="false" dense flat round icon="menu" @click="right = !right" />
-      </q-toolbar>
-    </q-header>
+                    <q-tabs>
+                        <q-route-tab to="/" exact label="Home" />
+                        <q-route-tab to="/sp" exact label="Singleplayer" />
+                        <q-route-tab to="/mp" exact label="Multiplayer" />
+                    </q-tabs>
+                </div>
 
-    <q-drawer v-model="right" side="right" behavior="desktop" bordered>
-      <!-- drawer content -->
-      <div class="text-h4">Drawer Content</div>
-    </q-drawer>
+                <div>
+                    <q-btn v-if="false" dense flat round icon="bug_report" @click="sendDebug" />
+                    <q-btn v-if="false" dense flat round icon="menu" @click="right = !right" />
+                </div>
+            </div>
+        </q-header>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+        <q-drawer v-model="right" side="right" behavior="desktop" bordered>
+            <!-- drawer content -->
+            <div class="text-h4">Drawer Content</div>
+        </q-drawer>
 
-  </q-layout>
+        <q-page-container>
+            <router-view />
+        </q-page-container>
+
+    </q-layout>
 </template>
 
 <script>
 import api from 'src/api'
 export default {
-  data () {
-    return {
-      right: false
-    }
-  },
-  methods: {
-    backHome() {
-      if (this.$route.path !== '/') {
-        this.$router.push('/')
-      }
+    data () {
+        return {
+            right: false
+        }
     },
-    sendDebug() {
-      return
-      api(3000, '/debug').then(res => {
-        console.log(res.data)
-      })
+    methods: {
+        backHome() {
+            if (this.$route.path !== '/') {
+                this.$router.push('/')
+            }
+        },
+        sendDebug() {
+            return
+            api(3000, '/debug').then(res => {
+                console.log(res.data)
+            })
+        }
+    },
+    created() {
+        let savedName = process.env.NODE_ENV == 'development' ? this.$q.sessionStorage.getItem('name') : this.$q.localStorage.getItem('name')
+        if (savedName) {
+            this.$store.commit('setName', savedName)
+        }
     }
-  },
-  created() {
-    let savedName = process.env.NODE_ENV == 'development' ? this.$q.sessionStorage.getItem('name') : this.$q.localStorage.getItem('name')
-    if (savedName) {
-      this.$store.commit('setName', savedName)
-    }
-  }
 }
 </script>

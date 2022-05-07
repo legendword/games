@@ -5,8 +5,10 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: 'landlord/:roomId', component: () => import('src/pages/games/LandLord.vue') },
-      { path: 'wordle+', component: () => import('src/pages/games/WordlePlus.vue') }
+      { path: 'sp', component: () => import('pages/Singleplayer.vue') },
+      { path: 'mp', component: () => import('pages/Multiplayer.vue') },
+      { path: 'landlord/:roomId', component: () => import('pages/games/LandLord.vue') },
+      { path: 'wordle+', component: () => import('pages/games/WordlePlus.vue') }
     ]
   },
 

@@ -20,7 +20,8 @@ export default function (/* { store, ssrContext } */) {
   console.log(Platform.is)
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
-    routes: Platform.is.mobile ? mobileRoutes : routes, //! change to Platform.is.capacitor later
+    routes: routes, // ! temporarily disabled mobileRoutes until the mobile pages are updated to v2.0 layout
+    // routes: Platform.is.mobile ? mobileRoutes : routes, //todo: change to Platform.is.capacitor later
 
     // Leave these as they are and change in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode

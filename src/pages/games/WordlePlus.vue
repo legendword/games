@@ -2,13 +2,13 @@
     <q-page class="text-center">
         <div @keydown="keydown($event)">
             <div class="q-my-md text-h5">Wordle+</div>
-            <div class="q-my-md text-subtitle2">Inspired by <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank" rel="noreferrer noopener">Wordle</a>.</div>
+            <div class="q-my-md text-subtitle2">Inspired by <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank" rel="noreferrer noopener" class="link">Wordle</a>.</div>
             <div class="game-select" v-if="state === 0">
                 <h4 class="q-pt-lg">Select Word Length</h4>
                 <div class="q-my-xl">
-                    <q-btn-toggle v-model="mode" toggle-color="primary" :options="modeOptions" size="lg" />
+                    <q-btn-toggle v-model="mode" toggle-color="accent" color="primary" :options="modeOptions" size="lg" />
                 </div>
-                <q-btn color="primary" size="lg" @click="play">Play</q-btn>
+                <q-btn color="primary" size="lg" @click="play" push class="float-on-hover">Start</q-btn>
             </div>
             <div v-else>
                 <div class="game-view">
@@ -26,12 +26,12 @@
                     </div>
                 </div>
                 <div class="game-controls q-my-lg">
-                    <div v-if="state === 2">
+                    <div v-if="state === 2" class="q-pb-md">
                         <div class="text-h5 q-my-md">Solution: {{ solution.join("").toUpperCase() }}</div>
-                        <q-btn color="primary" size="lg" @click="init">New Game</q-btn>
+                        <q-btn color="primary" size="lg" @click="init" push class="float-on-hover">New Game</q-btn>
                     </div>
                     <div v-else>
-                        <div class="game-keyboard">
+                        <div class="game-keyboard disable-double-tap-zoom">
                             <div class="keyboard-row" v-for="(row, i) in keyboard" :key="i">
                                 <div :class="'keyboard-cell ' + calcKeyboardColor(key)" v-for="key in row" :key="key" @click="keyboardPress(key)">{{ key }}</div>
                             </div>
@@ -241,7 +241,7 @@ export default {
             text-transform: uppercase;
 
             &.entered {
-                border: 1px solid black;
+                border: 1px solid var(--q-color-primary);
             }
             &.correct {
                 background-color: $positive;
