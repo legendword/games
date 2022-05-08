@@ -1,6 +1,6 @@
 <template>
     <q-page>
-        <section class="main-section">
+        <section class="main-section text-center">
             <div class="text-h1 floating-text">Legendword Games</div>
             <div class="text-h4 q-mt-lg main-subtitle">Minigames to be played anywhere.</div>
             <div class="q-mt-xl">

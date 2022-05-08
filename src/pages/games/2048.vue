@@ -71,9 +71,13 @@
 import Tile from '../../util/2048/Tile';
 import { tileSize, tileMargin } from '../../util/2048/constants'
 import { v4 as uuidv4 } from 'uuid';
+import GameOverDialog from 'src/components/GameOverDialog.vue';
 
 export default {
     name: "TwentyFortyEight",
+    components: {
+        GameOverDialog
+    },
     data() {
         return {
             tileSize,
@@ -207,7 +211,14 @@ export default {
             this.generateTiles();
         },
         gameOver() {
-            console.log('gameOver');
+            this.$q.dialog({
+                component: GameOverDialog,
+                score: this.score
+            }).onOk(() => {
+                this.init();
+            }).onCancel(() => {
+                this.$router.push("/sp");
+            });
         },
         addScore(num) {
             this.score += 2 ** num;

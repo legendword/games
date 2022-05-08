@@ -12,7 +12,9 @@
                         Legendword Games
                     </div>
                     -->
-
+                    <div class="logo-container">
+                        <img src="/logo.png" height="30" width="30" />
+                    </div>
                     <q-tabs>
                         <q-route-tab to="/" exact label="Home" />
                         <q-route-tab to="/sp" exact label="Singleplayer" />
@@ -68,3 +70,12 @@ export default {
     }
 }
 </script>
+
+<style>
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 20px;
+}
+</style>
