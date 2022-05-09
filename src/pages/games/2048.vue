@@ -25,8 +25,8 @@
                 <div class="score" v-show="false">TODO</div>
             </div>
             <div class="game" ref="main" :style="{
-                width: (tileSize*4+tileMargin*6),
-                height: (tileSize*4+tileMargin*6)
+                width: (tileSize*4+tileMargin*6) + 'px',
+                height: (tileSize*4+tileMargin*6) + 'px'
             }">
                 <!--
                 <div
@@ -69,7 +69,7 @@
 
 <script>
 import Tile from '../../util/2048/Tile';
-import { tileSize, tileMargin } from '../../util/2048/constants'
+import { tileSize, tileMargin } from '../../util/2048/constants';
 import { v4 as uuidv4 } from 'uuid';
 import GameOverDialog from 'src/components/GameOverDialog.vue';
 
@@ -474,7 +474,8 @@ export default {
         margin-top: 20px;
         transform-origin: top left;
         border-radius: 5px;
-        background: #bbada0;
+        /* background: #bbada0; */
+        background: #857769;
         z-index: 1;
     }
 

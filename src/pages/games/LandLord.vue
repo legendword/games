@@ -620,18 +620,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-.console {
-    height: calc( 100vh - 197px ); /* 51px (header) + 2*48px (2 q-pa-lg) + 50px (title) */
-    border: 1px solid $grey-4;
-}
-.block-center {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
-.width-100 {
-    width: 100%;
-}
-</style>

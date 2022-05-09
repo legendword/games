@@ -17,7 +17,7 @@
             </div>
             <div class="row">
                 <div class="col-6 col-md-3" v-for="game in gameList" :key="game.name">
-                    <q-card>
+                    <q-card class="mp-game-list-card q-ma-sm">
                         <q-card-section class="bg-primary text-white">
                             <div class="row q-mb-sm">
                                 <div class="col text-h6">{{ game.label }}</div>
@@ -31,6 +31,8 @@
                             
                             <div class="text-subtitle2">{{ game.desc }}</div>
                         </q-card-section>
+
+                        <q-space class="bg-primary" />
 
                         <q-separator />
 
@@ -87,7 +89,11 @@ export default {
                 landlord: {
                     status: 'unknown',
                     playerCount: ''
-                }
+                },
+                chess: {
+                    status: 'unknown',
+                    playerCount: ''
+                },
             },
             serverOffline: false,
             loadingServerInfo: false
@@ -181,5 +187,11 @@ export default {
 }
 .large-text {
     font-size: 18px;
+}
+.mp-game-list-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 </style>

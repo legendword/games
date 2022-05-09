@@ -23,7 +23,7 @@
                 </div>
 
                 <div>
-                    <q-btn v-if="false" dense flat round icon="bug_report" @click="sendDebug" />
+                    <q-btn dense flat round icon="bug_report" @click="sendDebug" />
                     <q-btn v-if="false" dense flat round icon="menu" @click="right = !right" />
                 </div>
             </div>
@@ -56,10 +56,8 @@ export default {
             }
         },
         sendDebug() {
-            return
-            api(3000, '/debug').then(res => {
-                console.log(res.data)
-            })
+            // return
+            api(3002, '/debug')
         }
     },
     created() {
