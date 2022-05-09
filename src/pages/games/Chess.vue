@@ -24,7 +24,7 @@
                                     v-for="j in 8"
                                     :key="i + ',' + j"
                                     class="background-tile"
-                                    :class="[(i+j)%2 === 0 ? 'white' : 'black', [currentMove.from, currentMove.to, game.lastMove.from, game.lastMove.to].includes(rcToSquare(i-1,j-1)) ? 'selected' : '']"
+                                    :class="[backgroundTileColor(i, j), [currentMove.from, currentMove.to, game.lastMove.from, game.lastMove.to].includes(rcToSquare(i-1,j-1)) ? 'selected' : '']"
                                     :style="{
                                         width: tileSize + 'px',
                                         height: tileSize + 'px',
@@ -56,10 +56,24 @@
                     </div>
                 </div>
             </div>
-            <div class="console-container q-pa-sm">
-                <div class="text-h6" style="height: 50px;">Console</div>
+            <div class="console-container">
+                <div class="text-h6 q-mb-sm">Console</div>
                 <q-scroll-area class="console q-pa-md">
-                    <div :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')" v-for="(msg, index) in messages" :key="index">{{msg.text}}</div>
+                    <template v-for="(msg, index) in messages">
+                        <div
+                            v-if="msg.type === 'msg'"
+                            :class="'q-mb-sm' + (msg.color?' text-'+msg.color:'')"
+                            :key="index"
+                        >{{msg.text}}</div>
+                        <div
+                            v-else
+                            class="console-move-container q-mb-sm"
+                            :key="index"
+                        >
+                            <div class="round">{{ msg.round }}</div>
+                            <div v-for="(move, j) in msg.moves" :key="j" class="move">{{ move }}</div>
+                        </div>
+                    </template>
                 </q-scroll-area>
             </div>
         </div>
@@ -70,13 +84,14 @@
 <script>
 import NameInput from 'src/components/NameInput.vue';
 import { tileSize } from '../../util/chess/constants';
-import { calcPos, rcToSquare } from 'src/util/chess/helpers';
 
 import { io } from "socket.io-client";
 import api from 'src/api';
 import { backendBasePath, ports } from 'src/basePath';
 const port = ports.chess;
 const backendPath = backendBasePath + ':' + port;
+
+const colIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g' ,'h'];
 
 export default {
     name: 'Chess',
@@ -89,11 +104,13 @@ export default {
             game: {},
             messages: [],
             tileSize: tileSize,
-            calcPos: calcPos,
-            rcToSquare: rcToSquare,
             currentMove: {
                 from: null,
                 to: null
+            },
+            lastUpdate: {
+                roundId: 1,
+                roundCounter: 0
             }
         }
     },
@@ -108,7 +125,6 @@ export default {
                     if (this.myTurn) {
                         // todo: if not valid move and on another piece, then choose this piece as currentMove.from instead (requires using chess.js client-side)
                         this.currentMove.to = square;
-                        console.log('move', this.currentMove);
                         this.socket.emit('move', this.currentMove);
                         this.currentMove.from = null;
                         this.currentMove.to = null;
@@ -122,6 +138,25 @@ export default {
             else {
                 this.currentMove.from = square;
             }
+        },
+        backgroundTileColor(i, j) {
+            if (this.mySide === 'white') {
+                return (i+j)%2 === 0 ? 'white' : 'black';
+            }
+            else {
+                return (i+j)%2 === 0 ? 'black' : 'white';
+            }
+        },
+        calcPos(squareId) {
+            let row = this.mySide === 'white' ? (8 - parseInt(squareId[1])) : (parseInt(squareId[1]) - 1);
+            let col = colIds.indexOf(squareId[0]);
+            return {
+                top: row * tileSize + 'px',
+                left: col * tileSize + 'px'
+            };
+        },
+        rcToSquare(r, c) {
+            return colIds[c] + (this.mySide === 'white' ? (8 - r) : (r + 1));
         },
         lobbyReady() {
             this.socket.emit('ready')
@@ -161,8 +196,31 @@ export default {
                 this.game = res;
                 if (this.game.gameState == 'game') {
                     if (this.pageMode !== 'game') this.pageMode = 'game';
+
                     this.currentMove.from = null;
                     this.currentMove.to = null;
+
+                    if (this.game.roundCounter !== this.lastUpdate.roundCounter || this.game.roundId !== this.lastUpdate.roundId) {
+                        // add move message
+                        let lastMsg = this.messages.length === 0 ? null : this.messages[this.messages.length - 1];
+                        if (this.game.roundCounter === 1) {
+                            this.messages.push({
+                                type: 'move',
+                                round: this.game.roundId,
+                                moves: [this.game.lastSAN]
+                            });
+                        }
+                        else if (!lastMsg || lastMsg.type !== 'move') {
+                            this.messages.push({
+                                type: 'move',
+                                round: this.game.roundId,
+                                moves: ['', this.game.lastSAN]
+                            });
+                        }
+                        else {
+                            this.messages[this.messages.length - 1].moves.push(this.game.lastSAN);
+                        }
+                    }
                 }
             });
             this.socket.on('gameRestart', () => {
@@ -188,8 +246,6 @@ export default {
             let value = obj.value;
             let color = null;
             switch (obj.type) {
-                // case 'move':
-                //     break;
                 case 'gameEnd':
                     break;
                 case 'connected':
@@ -228,7 +284,8 @@ export default {
                     msg = `${value}`;
                     break;
             }
-            this.messages.unshift({
+            this.messages.push({
+                type: 'msg',
                 text: msg,
                 color: color
             });
@@ -269,6 +326,9 @@ export default {
         myPlayer() {
             if (this.game.players && this.token) return this.game.players.find(v => v.token == this.token)
             else return {state: 'lobby'}
+        },
+        mySide() {
+            return this.myPlayer.side ? this.myPlayer.side : '';
         },
         myTurn() {
             if (this.game.players && this.token) {
@@ -359,6 +419,26 @@ export default {
     @media screen and (max-width: 700px) {
         .console-container {
             display: none;
+        }
+    }
+
+    .console-move-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        column-gap: 5px;
+
+        .round {
+            width: 40px;
+            font-weight: 500;
+
+            &::after {
+                content: '.';
+            }
+        }
+
+        .move {
+            width: 60px;
         }
     }
 

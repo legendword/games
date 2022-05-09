@@ -52,7 +52,6 @@
 
 <script>
 import { tileSize } from '../util/chess/constants';
-import { calcPos } from '../util/chess/helpers';
 export default {
     name: 'Testing',
     data() {
@@ -122,7 +121,7 @@ export default {
             ]],
 
             tileSize,
-            calcPos
+            calcPos: (x) => x, // ! removed
         }
     },
     mounted() {
