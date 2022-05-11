@@ -78,6 +78,20 @@
             </div>
         </div>
         <name-input />
+        <q-dialog v-model="gameEndDialog.show">
+            <q-card>
+                <q-card-section>
+                    <div class="text-center text-h6">Game Over</div>
+                </q-card-section>
+                <q-card-section>
+                    <div v-if="gameEndDialog.text != null" class="text-center text-h5">{{ gameEndDialog.text }}</div>
+                </q-card-section>
+                <q-card-section class="flex justify-center">
+                    <q-btn class="q-mx-md" color="secondary" label="Quit" @click="quitGame" />
+                    <q-btn class="q-mx-md" color="primary" :flat="iPlayAgain" :disable="!game.playAgain" :label="playAgainLabel" @click="playAgain" />
+                </q-card-section>
+            </q-card>
+        </q-dialog>
     </q-page>
 </template>
 
@@ -111,10 +125,20 @@ export default {
             lastUpdate: {
                 roundId: 1,
                 roundCounter: 0
+            },
+            gameEndDialog: {
+                show: false,
+                text: null
             }
         }
     },
     methods: {
+        quitGame() {
+            this.$router.push('/');
+        },
+        playAgain() {
+            this.socket.emit('playAgain');
+        },
         selectTile(square) {
             if (this.currentMove.from) {
                 if (this.currentMove.from === square) {
@@ -200,7 +224,7 @@ export default {
                     this.currentMove.from = null;
                     this.currentMove.to = null;
 
-                    if (this.game.roundCounter !== this.lastUpdate.roundCounter || this.game.roundId !== this.lastUpdate.roundId) {
+                    if (!this.game.gameEnded && (this.game.roundCounter !== this.lastUpdate.roundCounter || this.game.roundId !== this.lastUpdate.roundId)) {
                         // add move message
                         let lastMsg = this.messages.length === 0 ? null : this.messages[this.messages.length - 1];
                         if (this.game.roundCounter === 1) {
@@ -224,8 +248,8 @@ export default {
                 }
             });
             this.socket.on('gameRestart', () => {
-                console.log('gameRestart')
-                this.showEndScreen = false;
+                console.log('gameRestart');
+                this.gameEndDialog.show = false;
                 this.messages = [];
             });
             this.socket.on('msg', (res) => {
@@ -247,6 +271,10 @@ export default {
             let color = null;
             switch (obj.type) {
                 case 'gameEnd':
+                    msg = value === 'draw' ? 'Draw.' : (value === 'white' ? 'White won.' : 'Black won.');
+                    color = 'primary';
+                    this.gameEndDialog.text = value === 'draw' ? 'Draw.' : (this.myPlayer.side === value ? 'You won.' : 'You lost.');
+                    this.gameEndDialog.show = true;
                     break;
                 case 'connected':
                     msg = 'Connected to server.';
@@ -335,6 +363,13 @@ export default {
                 return this.game.players.findIndex(v => v.token == this.token) === this.game.roundPos;
             }
             else return false;
+        },
+        iPlayAgain() {
+            return this.game.playAgain ? this.game.playAgain.includes(this.token) : false
+        },
+        playAgainLabel() {
+            if (!this.game.playAgain) return 'Play Again'
+            return (this.game.playAgain.includes(this.token) ? 'Waiting for Others' : 'Play Again') + ' ' + this.game.playAgain.length
         }
     },
     watch: {
