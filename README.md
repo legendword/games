@@ -6,6 +6,7 @@ Currently, we have the following games supported on the platform:
 
 - Landlord (3-player card game)
 - Wordle+ (Wordle with more word length choices)
+- 2048
 
 More games are being added... You can let us know what games you would like on the platform by opening an issue in [Issues](https://github.com/legendword/games/issues).
 
