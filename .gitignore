@@ -1,24 +1,20 @@
 .DS_Store
 .thumbs.db
-node_modules
 
-# Quasar core related directories
-.quasar
-/dist
+# Frontend build artifacts
+frontend/node_modules
+frontend/.quasar
+frontend/dist
 
-# Cordova related directories and files
-/src-cordova/node_modules
-/src-cordova/platforms
-/src-cordova/plugins
-/src-cordova/www
-
-# Capacitor related directories and files
-/src-capacitor/www
-/src-capacitor/node_modules
-
-# BEX related directories and files
-/src-bex/www
-/src-bex/js/core
+# Frontend Cordova/Capacitor
+frontend/src-cordova/node_modules
+frontend/src-cordova/platforms
+frontend/src-cordova/plugins
+frontend/src-cordova/www
+frontend/src-capacitor/www
+frontend/src-capacitor/node_modules
+frontend/src-bex/www
+frontend/src-bex/js/core
 
 # Log files
 npm-debug.log*
