@@ -1,0 +1,12 @@
+{
+    "name": "games-backend",
+    "version": "0.0.1",
+    "description": "Backend Socket.io app for Legendword Games",
+    "dependencies": {
+        "chess.js": "^0.13.2",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "socket.io": "^4.0.0",
+        "uuid": "^8.3.2"
+    }
+}
