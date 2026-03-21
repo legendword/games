@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost}
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-index
+      - backend-landlord
+      - backend-chess
+
+  backend-index:
+    build: ./backend
+    command: node index.js
+    ports:
+      - "3000:3000"
+
+  backend-landlord:
+    build: ./backend
+    command: node landlord.js
+    ports:
+      - "3001:3001"
+
+  backend-chess:
+    build: ./backend
+    command: node chess.mjs
+    ports:
+      - "3002:3002"

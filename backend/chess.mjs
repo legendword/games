@@ -5,23 +5,13 @@ const game = games.chess;
 
 import express from 'express';
 const app = express();
-// import httpLib from 'http';
-// const http = httpLib.Server(app);
-
-import httpsLib from 'https';
-import fs from 'fs';
-const privateKey = fs.readFileSync('../ssl/legendword.key', 'utf8');
-const certificate = fs.readFileSync('../ssl/legendword.crt', 'utf8');
-const https = httpsLib.createServer({
-    key: privateKey,
-    cert: certificate
-}, app);
+import httpLib from 'http';
+const http = httpLib.Server(app);
 
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
 import { Server as socketIO } from 'socket.io';
-const io = new socketIO(https, {
-// const io = new socketIO(http, {
+const io = new socketIO(http, {
     cors: {
         origin: true,
         methods: ["GET", "POST"],
@@ -311,8 +301,7 @@ io.on('connection', (socket) => {
     });
 });
 
-https.listen(game.port, () => {
-// http.listen(game.port, () => {
+http.listen(game.port, () => {
     console.log(`Running ${game.name} on port ${game.port} with roomLimit ${game.roomLimit}`);
 });
 

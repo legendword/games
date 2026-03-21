@@ -4,17 +4,10 @@ const game = games.landlord;
 
 const express = require('express');
 const app = express();
-const httpsLib = require('https');
-const fs = require('fs');
-const privateKey = fs.readFileSync('../ssl/legendword.key', 'utf8');
-const certificate = fs.readFileSync('../ssl/legendword.crt', 'utf8');
-const https = httpsLib.createServer({
-    key: privateKey,
-    cert: certificate
-}, app)
+const http = require('http').Server(app);
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const io = require('socket.io')(https, {
+const io = require('socket.io')(http, {
     cors: {
         origin: true,
         methods: ["GET", "POST"],
@@ -445,7 +438,7 @@ io.on('connection', (socket) => {
     })
 });
 
-https.listen(game.port, () => {
+http.listen(game.port, () => {
     console.log(`Running ${game.name} on port ${game.port} with roomLimit ${game.roomLimit}`);
 });
 
