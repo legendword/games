@@ -75,7 +75,7 @@
 <script>
 import NameInput from 'src/components/NameInput.vue'
 import api from '../api'
-import { frontendBasePath, ports } from 'src/basePath'
+import { frontendBasePath, paths } from 'src/basePath'
 import version from 'src/version'
 import gameList from 'src/gameList'
 export default {
@@ -105,7 +105,7 @@ export default {
             let totalCount = this.gameList.length
             this.loadingServerInfo = true
             for (let i of this.gameList) {
-                api(ports[i.name], '/').then(res => {
+                api(paths[i.name], '/').then(res => {
                     this.gameStatus[i.name] = res.data
                     if (++loadedCount == totalCount) this.loadingServerInfo = false
                 }).catch(err => {
@@ -116,7 +116,7 @@ export default {
             }
         },
         fetchBaseInfo() {
-            api(ports.index, '/').then(res => {
+            api(paths.index, '/').then(res => {
                 let r = res.data
                 if (r.version != version) {
                     this.$q.dialog({
@@ -148,7 +148,7 @@ export default {
             }
         },
         createRoom(game) {
-            api(ports[game.name], '/rooms/create').then(res => {
+            api(paths[game.name], '/rooms/create').then(res => {
                 let r = res.data
                 console.log(r)
                 if (r.success) {

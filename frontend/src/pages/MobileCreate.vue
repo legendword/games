@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { ports } from 'src/basePath'
+import { paths } from 'src/basePath'
 import api from '../api'
 import gameList from 'src/gameList'
 export default {
@@ -27,7 +27,7 @@ export default {
     },
     methods: {
         createRoom(game) {
-            api(ports[game.name], '/rooms/create').then(res => {
+            api(paths[game.name], '/rooms/create').then(res => {
                 let r = res.data
                 console.log(r)
                 if (r.success) {

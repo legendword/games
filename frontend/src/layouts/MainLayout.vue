@@ -43,6 +43,7 @@
 
 <script>
 import api from 'src/api'
+import { paths } from 'src/basePath'
 export default {
     data () {
         return {
@@ -57,7 +58,7 @@ export default {
         },
         sendDebug() {
             // return
-            api(3002, '/debug')
+            api(paths.chess, '/debug')
         }
     },
     created() {

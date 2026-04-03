@@ -286,10 +286,8 @@
 import NameInput from 'src/components/NameInput.vue'
 import { io } from "socket.io-client";
 import api from 'src/api';
-import { backendBasePath, ports } from 'src/basePath';
+import { paths } from 'src/basePath';
 import { cards, cardsReference } from 'src/cards';
-const port = ports.landlord;
-const backendPath = backendBasePath + ':' + port;
 export default {
     components: { NameInput },
     name: 'LandLord',
@@ -369,7 +367,8 @@ export default {
             this.socket.emit('ready')
         },
         connect() {
-            this.socket = io(backendPath, {
+            this.socket = io(window.location.origin, {
+                path: paths.landlord + '/socket.io',
                 reconnection: false
             })
             this.socket.on('connect', () => {
@@ -501,7 +500,7 @@ export default {
             })
         },
         init() {
-            api(port, '/rooms/state', {
+            api(paths.landlord, '/rooms/state', {
                 roomId: this.roomId
             }).then(res => {
                 let r = res.data

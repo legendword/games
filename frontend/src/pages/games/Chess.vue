@@ -101,9 +101,7 @@ import { tileSize } from '../../util/chess/constants';
 
 import { io } from "socket.io-client";
 import api from 'src/api';
-import { backendBasePath, ports } from 'src/basePath';
-const port = ports.chess;
-const backendPath = backendBasePath + ':' + port;
+import { paths } from 'src/basePath';
 
 const colIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g' ,'h'];
 
@@ -186,7 +184,8 @@ export default {
             this.socket.emit('ready')
         },
         connect() {
-            this.socket = io(backendPath, {
+            this.socket = io(window.location.origin, {
+                path: paths.chess + '/socket.io',
                 reconnection: false
             });
             this.socket.on('connect', () => {
@@ -319,7 +318,7 @@ export default {
             });
         },
         init() {
-            api(port, '/rooms/state', {
+            api(paths.chess, '/rooms/state', {
                 roomId: this.roomId
             }).then(res => {
                 let r = res.data
